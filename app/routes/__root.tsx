@@ -1,8 +1,13 @@
 import * as React from "react";
-import { createRootRouteWithContext } from "@tanstack/react-router";
-import { Outlet, ScrollRestoration } from "@tanstack/react-router";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import {
+	createRootRouteWithContext,
+	Outlet,
+	ScrollRestoration,
+} from "@tanstack/react-router";
 import { Body, Head, Html, Meta, Scripts } from "@tanstack/start";
-import { QueryClient } from "@tanstack/react-query";
+import { getTRPCClientOptions } from "../utils/auth";
+import { createAuthenticatedTRPCClient, trpc } from "../utils/trpc";
 
 export interface RootRouteContext {
 	queryClient: QueryClient;
@@ -22,6 +27,10 @@ export const Route = createRootRouteWithContext<RootRouteContext>()({
 		},
 	],
 	component: RootComponent,
+	beforeLoad: async () => {
+		const trpcClientOptions = await getTRPCClientOptions();
+		return { trpcClientOptions };
+	},
 });
 
 function RootComponent() {
@@ -32,6 +41,26 @@ function RootComponent() {
 	);
 }
 
+function TRPCProvider(
+	props: Readonly<{
+		children: React.ReactNode;
+	}>
+) {
+	const { clientHeaders, clientUrl } = Route.useRouteContext({
+		select: (data) => data.trpcClientOptions,
+	});
+	const trpcClient = createAuthenticatedTRPCClient(clientUrl, clientHeaders);
+	const queryClient = useQueryClient();
+
+	return (
+		<React.Fragment>
+			<trpc.Provider client={trpcClient} queryClient={queryClient}>
+				{props.children}
+			</trpc.Provider>
+		</React.Fragment>
+	);
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<Html>
@@ -39,7 +68,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<Meta />
 			</Head>
 			<Body>
-				{children}
+				<TRPCProvider>{children}</TRPCProvider>
 				<ScrollRestoration />
 				<Scripts />
 			</Body>
