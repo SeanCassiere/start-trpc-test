@@ -6,6 +6,7 @@ import {
 	ScrollRestoration,
 } from "@tanstack/react-router";
 import { Body, Head, Html, Meta, Scripts } from "@tanstack/start";
+import { Link } from "@tanstack/react-router";
 import { getTRPCClientOptions } from "../utils/auth";
 import { createAuthenticatedTRPCClient, trpc } from "../utils/trpc";
 
@@ -68,7 +69,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<Meta />
 			</Head>
 			<Body>
-				<TRPCProvider>{children}</TRPCProvider>
+				<TRPCProvider>
+					<nav>
+						<ul>
+							<li>
+								<Link to='/'>Home</Link>
+							</li>
+							<li>
+								<Link to='/about'>About</Link>
+							</li>
+						</ul>
+					</nav>
+					{children}
+				</TRPCProvider>
 				<ScrollRestoration />
 				<Scripts />
 			</Body>

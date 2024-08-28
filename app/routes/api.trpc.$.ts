@@ -1,8 +1,8 @@
 import { createAPIFileRoute } from "@tanstack/start/api";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-import { appRouter } from "../../server/_app";
-import { createContext } from "../../server/trpc";
+import { appRouter } from "../server/_app";
+import { createContext } from "../server/trpc";
 
 function trpcHandler({ request }: { request: Request }) {
 	return fetchRequestHandler({
