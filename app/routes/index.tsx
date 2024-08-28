@@ -26,6 +26,10 @@ function Home() {
 				<p>Welcome to the home page!</p>
 				<p>Server data says: {greetingData}</p>
 				<p>Client data says: {clientGreeting}</p>
+				<p>
+					Client data isn't really working though... It ALL seems to be
+					happening from the server
+				</p>
 			</div>
 		</React.Fragment>
 	);
